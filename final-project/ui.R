@@ -10,24 +10,49 @@
 library(shiny)
 
 # Define UI for application that draws a histogram
-shinyUI(fluidPage(
+# shinyUI(fluidPage(
+#   
+#   # Application title
+#   titlePanel("Old Faithful Geyser Data"),
+#   
+#   # Sidebar with a slider input for number of bins 
+#   sidebarLayout(
+#     sidebarPanel(
+#        sliderInput("bins",
+#                    "Number of bins:",
+#                    min = 1,
+#                    max = 50,
+#                    value = 30)
+#     ),
+#     
+#     # Show a plot of the generated distribution
+#     mainPanel(
+#        plotOutput("distPlot")
+#     )
+#   )
+# ))
+
+shinyUI(pageWithSidebar(
   
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  headerPanel("Stocks"),
   
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-       sliderInput("bins",
-                   "Number of bins:",
-                   min = 1,
-                   max = 50,
-                   value = 30)
-    ),
+  sidebarPanel(
+    selectInput("variable", "Variable:",
+                list("Open" = "Open",
+                     "High" = "High",
+                     "Low" = "Low",
+                     "Close" = "Close",
+                     "Volume" = "Volume",
+                     "Adj Close" = "Adj.Close")),
     
-    # Show a plot of the generated distribution
-    mainPanel(
-       plotOutput("distPlot")
-    )
+    checkboxInput("outliers", "Show outliers", FALSE)
+  ),
+  
+  mainPanel(
+    h3(textOutput("caption")),
+    
+    plotOutput("stockPlot")
   )
+  
 ))

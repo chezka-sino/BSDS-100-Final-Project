@@ -8,18 +8,52 @@
 #
 
 library(shiny)
+library(ggplot2)
 
-# Define server logic required to draw a histogram
+# # Define server logic required to draw a histogram
+
+# shinyServer(function(input, output) {
+#    
+#   output$distPlot <- renderPlot({
+#     
+#     # generate bins based on input$bins from ui.R
+#     x    <- faithful[, 2] 
+#     bins <- seq(min(x), max(x), length.out = input$bins + 1)
+#     
+#     # draw the histogram with the specified number of bins
+#     hist(x, breaks = bins, col = 'darkgray', border = 'white')
+#     
+#   })
+#   
+# })
+
+stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
+
 shinyServer(function(input, output) {
-   
-  output$distPlot <- renderPlot({
+  
+  formulaText <- reactive({
+    # paste("stockData$", input$variable, sep = "")
+    # paste("aes(", as.Date(stockData$Date, "%Y-%d-%m"), ",", input$variable, ")")
+    # input$variable
+  })
+  
+  output$caption <- renderText({
+    formulaText()
+    # input$variable
+  })
+  
+  output$stockPlot <- renderPlot({
+    # ggplot(data = stockData, aes(x = Date, y = input$variable)) + geom_line()
+    # plot(as.Date(stockData$Date, "%Y-%d-%m"), formulaText())
+    attach(stockData)
+    print(Open)
+    print(input$variable)
+    print(typeof(stockData$Open))
+    print(formulaText())
+    test <- formulaText()
+    print(test)
     
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2] 
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    ggplot(stockData, aes(as.Date(Date, "%Y-%d-%m"), input$variable)) + geom_line()
     
   })
   
