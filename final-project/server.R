@@ -27,9 +27,11 @@ library(ggplot2)
 #   
 # })
 
-stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
+# stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) {
+  
+  stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
   
   formulaText <- reactive({
     # paste("stockData$", input$variable, sep = "")
@@ -43,17 +45,9 @@ shinyServer(function(input, output) {
   })
   
   output$stockPlot <- renderPlot({
-    # ggplot(data = stockData, aes(x = Date, y = input$variable)) + geom_line()
-    # plot(as.Date(stockData$Date, "%Y-%d-%m"), formulaText())
-    attach(stockData)
-    print(Open)
-    print(input$variable)
-    print(typeof(stockData$Open))
-    print(formulaText())
-    test <- formulaText()
-    print(test)
     
-    ggplot(stockData, aes(as.Date(Date, "%Y-%d-%m"), input$variable)) + geom_line()
+    data <- data.frame(date = stockData$Date, var = stockData[[input$variable]])
+    ggplot(data, aes(as.Date(date, "%Y-%d-%m"), var)) + geom_line() + ylab(input$variable) + xlab("Date")
     
   })
   
