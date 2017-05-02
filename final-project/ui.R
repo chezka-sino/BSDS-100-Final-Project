@@ -46,7 +46,16 @@ shinyUI(pageWithSidebar(
                      "Volume" = "Volume",
                      "Adj Close" = "Adj.Close")),
     
-    checkboxInput("outliers", "Show outliers", FALSE)
+    # checkboxInput("outliers", "Show outliers", FALSE),
+    
+    br(),
+    
+    sliderInput("Dates",
+                "Date Range:",
+                min = as.Date("2016-01-01", "%Y-%m-%d"),
+                max = as.Date("2018-01-01", "%Y-%m-%d"),
+                value = c(as.Date("2016-01-01"), as.Date("2017-01-01")),
+                timeFormat = "%Y-%m-%d")
   ),
   
   mainPanel(

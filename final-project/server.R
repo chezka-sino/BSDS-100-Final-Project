@@ -27,21 +27,21 @@ library(ggplot2)
 #   
 # })
 
-# stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
+stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) {
   
-  stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
-  
   formulaText <- reactive({
-    # paste("stockData$", input$variable, sep = "")
-    # paste("aes(", as.Date(stockData$Date, "%Y-%d-%m"), ",", input$variable, ")")
-    # input$variable
+    input$variable
   })
   
   output$caption <- renderText({
     formulaText()
     # input$variable
+  })
+  
+  sliderValues <- reactive({
+    
   })
   
   output$stockPlot <- renderPlot({
