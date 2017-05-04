@@ -48,6 +48,11 @@ shinyUI(pageWithSidebar(
     
     # checkboxInput("outliers", "Show outliers", FALSE),
     
+    # br(),
+    
+    textInput("text", label = "Stock"),
+    submitButton("Add to list"),
+    
     br(),
     
     sliderInput("Dates",
