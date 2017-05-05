@@ -44,6 +44,20 @@ shinyServer(function(input, output) {
     
   })
   
+  stocks <- reactiveValues()
+  # observe({
+  #   if (input$add > 0) {
+  #     stocks$dList <- c(isolate(stocks$dList), input$text)
+  #   }
+  # })
+  observeEvent(input$add, {
+    stocks$dList <- c(isolate(stocks$dList), input$text)
+  })
+  
+  output$list <- renderText({
+    stocks$dList
+  })
+  
   output$stockPlot <- renderPlot({
     
     data <- data.frame(date = stockData$Date, var = stockData[[input$variable]])

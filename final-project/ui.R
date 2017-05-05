@@ -50,8 +50,9 @@ shinyUI(pageWithSidebar(
     
     # br(),
     
-    textInput("text", label = "Stock"),
-    submitButton("Add to list"),
+    textInput('text', 'Stock', 'Text'),
+    actionButton('add', 'Add to List'),
+    verbatimTextOutput('list'),
     
     br(),
     
