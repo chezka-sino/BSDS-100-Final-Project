@@ -9,6 +9,7 @@
 
 library(shiny)
 library(ggplot2)
+library(fImport)
 
 # # Define server logic required to draw a histogram
 
@@ -60,9 +61,20 @@ shinyServer(function(input, output) {
   
   output$stockPlot <- renderPlot({
     
+    # Note! input$variable needs the format [stockName.varaible] e.g. "GOOG.Adj.Close"
+    # So I suggest concat or paste stockName+input$variable
     data <- data.frame(date = stockData$Date, var = stockData[[input$variable]])
-    ggplot(data, aes(as.Date(date, "%Y-%d-%m"), var)) + geom_line() + ylab(input$variable) + xlab("Date")
+    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() 
     
   })
+  
+  createStockData <- function(inputStockName) {
+    stockTimeSeries = yahooSeries(inputStockName)
+    
+    stockDF = as.data.frame(googleStock)
+    
+    return(stockDF)
+    
+  }
   
 })
