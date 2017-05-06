@@ -28,7 +28,7 @@ library(fImport)
 #   
 # })
 
-stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
+# stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
 
 shinyServer(function(input, output) {
   
@@ -61,9 +61,13 @@ shinyServer(function(input, output) {
   
   output$stockPlot <- renderPlot({
     
+    inputStockName = "GOOG"
+    
+    stockData = createStockData(inputStockName)
+    
     # Note! input$variable needs the format [stockName.varaible] e.g. "GOOG.Adj.Close"
     # So I suggest concat or paste stockName+input$variable
-    data <- data.frame(date = stockData$Date, var = stockData[[input$variable]])
+    data <- data.frame(date = row.names(stockData), var = stockData[["GOOG.Adj.Close"]])
     ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() 
     
   })
@@ -71,7 +75,7 @@ shinyServer(function(input, output) {
   createStockData <- function(inputStockName) {
     stockTimeSeries = yahooSeries(inputStockName)
     
-    stockDF = as.data.frame(googleStock)
+    stockDF = as.data.frame(stockTimeSeries)
     
     return(stockDF)
     
