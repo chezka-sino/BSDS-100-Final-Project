@@ -28,6 +28,7 @@ shinyServer(function(input, output) {
     input$text
   })
   
+  
   output$caption <- renderText({
     formulaText()
     # input$variable
@@ -44,22 +45,32 @@ shinyServer(function(input, output) {
   })
   
   output$metrics <- renderTable({
+    
+
     getMetrics(input$text)
   })
   
   output$stockPlot <- renderPlot({
     
-    stockData <- createStockData(input$text)
+    withProgress(message = 'Loading', value = 0, {
+
+      
+    incProgress(2/10, detail = paste("Loading Stock Data from API"))
+        
+
+   
+    
+    #stockData <- createStockData(input$text)
 
     inputStockName <- paste(input$text, ".", input$variable, sep="")
 
     # Note! input$variable needs the format [stockName.varaible] e.g. "GOOG.Adj.Close"
     # So I suggest concat or paste stockName+input$variable
 
-    stockData <- stockData[which(as.Date(row.names(stockData), "%Y-%m-%d") > max(as.Date(row.names(stockData), "%Y-%m-%d")) - 
-                                   as.numeric(input$select)),]
+    #stockData <- stockData[which(as.Date(row.names(stockData), "%Y-%m-%d") > max(as.Date(row.names(stockData), "%Y-%m-%d")) - 
+    #                               as.numeric(input$select)),]
     
-    data <- data.frame(date = row.names(stockData), var = stockData[[inputStockName]])
+    #data <- data.frame(date = row.names(stockData), var = stockData[[inputStockName]])
     y.lab <- paste(input$variable, "Price", sep=" ")
     x.lab <- ""
     
@@ -71,33 +82,83 @@ shinyServer(function(input, output) {
     if (input$variable == "Volume") {
       y.lab <- "Volume"
     }
-    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() + labs(y = y.lab, x = x.lab)
+    
+    incProgress(4/10, detail = paste("Plotting Data.."))
+    #ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() + labs(y = y.lab, x = x.lab)
+    
+    
+    if (length(input$TA)!=0){
+      indicators <- paste0(paste0(input$TA,collapse = ""),"addVo()")
+    } else {
+      indicators <- "addVo()"
+    }
+    
+    print(indicators)
+    StockData <- createStockData(input$text)
+    chartSeries(StockData,theme = "black",subset = input$select,TA=indicators)    
+    
+    
+    })# With Progress Function End
     
   })
   
   output$wordCloud <- renderPlot({
+    
+    withProgress(message = 'Loading', value = 0, {
+      
     filepath <- "news.txt"
+    
+    incProgress(5/10, detail = paste("Downloading News Information"))
+    
     createNewsTXT(input$text, 100, filepath)
     # Read the text file from internet
     # filePath <- "http://www.sthda.com/sthda/RDoc/example-files/martin-luther-king-i-have-a-dream-speech.txt"
     # text <- readLines(filePath)
     
     text <- readLines(filepath)
-    drawWordCloud(text)}
     
+    incProgress(8/10, detail = paste("Drawing Word Cloud"))
+    drawWordCloud(text)
+    
+    
+    
+    })# With Progress Function End
+    
+    ## Make word cloud available draw space bigger here
+    } , height = 750, width = 1000
+  
   )
   
   output$newsTitle <- renderText({
+    withProgress(message = 'Loading', value = 0, {
+    incProgress(90/100, detail = paste("Loading News Data"))
     title <- paste("Top news for ", input$text, ":", sep="")
     title
+    })# With Progress Function End
   })
   
-  output$news <- renderTable({
-    links <- getNews(input$text, 100)
-    urls <- data.frame(links[1:10,2]) 
-    urls
-  }, colnames = FALSE)
+
+  
+  lapply(1:10, function(i) {
     
+
+    output[[paste0('b', i)]] <- renderUI({
+      newsDF <- getNews(input$text,10)
+      newsTitleLink <- newsDF[,1:2]
+      tagList(paste0(i,") "), a(  as.character(newsTitleLink[i,1] ) ,   href=as.character(newsTitleLink[i,2]) ) ) 
+    })
+    
+    
+  })  
+  
+  output$ending <- renderText({
+    withProgress(message = 'Done', value = 0, {
+      incProgress(10/10, detail = paste("Done"))
+      title <- paste("------------------------")
+      title
+    })# With Progress Function End
+  })
+  
   
   # Helper methods
       
@@ -144,8 +205,8 @@ shinyServer(function(input, output) {
     metrics <- data.frame(Symbol=tickers, metrics[,2:length(metrics)]) 
     
     #Change colnames
-    colnames(metrics) <- c("Symbol", "Revenue Multiple", "Earnings Multiple", 
-                           "Earnings Multiple (Forward)", "Price-to-Earnings-Growth", "Div Yield", "Market Cap")
+    colnames(metrics) <- c("Symbol", "Price-to-Sales", "Price-to-Earnings", 
+                           "P/E Ratio (Forward Est. 1Y)", "Price-to-Earnings-Growth", "Div Yield", "Market Cap")
     
     return(metrics)    
   }
@@ -178,14 +239,18 @@ shinyServer(function(input, output) {
     m <- as.matrix(dtm)
     v <- sort(rowSums(m),decreasing=TRUE)
     d <- data.frame(word = names(v),freq=v)
+    
+    d <- d[c(-1:-5),]
+    
     head(d, 10)
     
     set.seed(1234)
     wordcloud(words = d$word, freq = d$freq, min.freq = 1,
-              max.words=200, random.order=FALSE, rot.per=0.35, 
-              colors=brewer.pal(8, "Dark2"))
+              max.words=300, random.order=FALSE, rot.per=0.35, 
+              colors=brewer.pal(8, "Dark2"),scale = c(4,1))
     
   }
+
   
   ## Symbol is stock symbol e.g GOOG
   ## number is the number of stories to download, e.g. 50 will give you 50 stories

@@ -23,17 +23,25 @@ shinyUI(pageWithSidebar(
                      "Close" = "Close",
                      "Volume" = "Volume")),
     
-    selectInput("select", "Time Frame:",
-                list("1 Week" = 9,
-                     "1 Month" = 32,
-                     "3 Months" = 92,
-                     "1 Year" = 367,
-                     "3 Years" = 1097,
-                     "5 Years" = 1827), selected = 367),
+    selectInput("select", "Time Frame",
+                list("1 Week" = "last 1 week",
+                     "1 Month" = "last 1 month",
+                     "3 Months" = "last 3 month",
+                     "1 Year" = "last 1 year",
+                     "3 Years" = "last 3 year",
+                     "5 Years" = "last 5 year"), selected = "last 1 year"),
     
     # checkboxInput("outliers", "Show outliers", FALSE),
     
-    textInput('text', 'Stock:', 'GOOG'),
+    checkboxGroupInput("TA", "Technical Indicators:",
+                       choiceNames =
+                         list("Simple Moving Average","Bollinger Bands"),
+                       choiceValues =
+                         list("addSMA();", "addBBands();")
+    ),
+    textOutput("txt"),
+    
+    textInput('text', 'Stock Symbol:', 'GOOG'),
     submitButton("Submit")
     # actionButton('add', 'Add to List')
     # verbatimTextOutput
@@ -43,7 +51,7 @@ shinyUI(pageWithSidebar(
   mainPanel(
     h3(textOutput("caption")),
     
-    plotOutput("stockPlot"),
+    plotOutput("stockPlot", height = 750, width = 850),
     
     br(),
     
@@ -51,11 +59,16 @@ shinyUI(pageWithSidebar(
     
     br(),
     
-    plotOutput("wordCloud"),
+    plotOutput("wordCloud", height = 750, width = 1000),
     
     h4(textOutput("newsTitle")),
     
-    tableOutput("news")
+    lapply(1:10, function(i) {
+      uiOutput(paste0('b', i))
+    }),
+    
+    h5(textOutput("ending"))
+    
     
   )
   
