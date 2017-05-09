@@ -3,6 +3,19 @@
 # library(ggplot2)
 # library(fImport)
 
+### Note! New createStockData function based on quantmod package!
+## outputs more data (10 years worth etc)
+
+# Quantmod version instead of fImport, 
+createStockData <- function(inputStockName) {
+  
+  stockData <- getSymbols(inputStockName,auto.assign = FALSE)
+  
+  stockDF <- as.data.frame(stockData)
+  
+  return(stockDF)
+}
+
 ## Helper Function
 
 createStockData <- function(inputStockName) {
