@@ -16,7 +16,7 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     selectInput("variable", "Variable:",
-                list("Adj Close" = "Adj.Close",
+                list("Adj Close" = "Adjusted",
                      "Open" = "Open",
                      "High" = "High",
                      "Low" = "Low",
@@ -26,7 +26,10 @@ shinyUI(pageWithSidebar(
     selectInput("select", "Time Frame",
                 list("1 Week" = 9,
                      "1 Month" = 32,
-                     "3 Months" = 92), selected = 32),
+                     "3 Months" = 92,
+                     "1 Year" = 367,
+                     "3 Years" = 1097,
+                     "5 Years" = 1827), selected = 367),
     
     # checkboxInput("outliers", "Show outliers", FALSE),
     
@@ -40,7 +43,11 @@ shinyUI(pageWithSidebar(
   mainPanel(
     h3(textOutput("caption")),
     
-    plotOutput("stockPlot")
+    plotOutput("stockPlot"),
+    
+    br(),
+    
+    tableOutput("metrics")
   )
   
 ))
