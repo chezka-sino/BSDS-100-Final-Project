@@ -51,9 +51,15 @@ shinyUI(pageWithSidebar(
     # br(),
     
     textInput('text', 'Stock', 'Text'),
-    submitButton("Submit")
+    submitButton("Submit"),
+    br(),
     # actionButton('add', 'Add to List')
-    # verbatimTextOutput('list')
+    # verbatimTextOutput
+    selectInput("select", "Time Frame",
+                list("1 Week" = 1,
+                     "1 Month" = 2,
+                     "3 Months" = 3), selected = 3)
+    
     
   ),
   

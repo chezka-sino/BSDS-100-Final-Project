@@ -51,3 +51,9 @@ plotMultiGraph(dataYHOO,dataUAL)
 
 # Able to call 3 data frames while the fourth data frame is null, can be expanded as necessary easily
 plotMultiGraph(dataYHOO,dataUAL,dataGOOG)
+
+# as.Date(date, "%Y-%m-%d")
+GOOGStock[which(as.Date(row.names(GOOGStock), "%Y-%m-%d") > (max(as.Date(row.names(GOOGStock), "%Y-%m-%d")) - 9)),]
+
+
+
