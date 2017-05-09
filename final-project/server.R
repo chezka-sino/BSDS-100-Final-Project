@@ -43,7 +43,7 @@ shinyServer(function(input, output) {
     # 
     # stockData = createStockData(inputStockName)
     
-    stockData = createStockData(input$text)
+    stockData <- createStockData(input$text)
     inputStockName <- paste(input$text, ".", input$variable, sep="")
 
     # Note! input$variable needs the format [stockName.varaible] e.g. "GOOG.Adj.Close"
@@ -51,9 +51,15 @@ shinyServer(function(input, output) {
 
     # data <- data.frame(date = row.names(stockData), var = stockData[["GOOG.Adj.Close"]])
     # ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line()
+    stockData <- stockData[which(as.Date(row.names(stockData), "%Y-%m-%d") > max(as.Date(row.names(stockData), "%Y-%m-%d")) - 
+                                   as.numeric(input$select)),]
     
     data <- data.frame(date = row.names(stockData), var = stockData[[inputStockName]])
-    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line()
+    y.lab <- "Price"
+    if (input$variable == "Volume") {
+      y.lab <- "Volume"
+    }
+    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() + labs(y = y.lab)
     
     
   })
