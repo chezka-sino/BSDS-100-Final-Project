@@ -10,25 +10,9 @@
 library(shiny)
 library(ggplot2)
 library(fImport)
+# source("ggplotCombine.R")
 
-# # Define server logic required to draw a histogram
-
-# shinyServer(function(input, output) {
-#    
-#   output$distPlot <- renderPlot({
-#     
-#     # generate bins based on input$bins from ui.R
-#     x    <- faithful[, 2] 
-#     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-#     
-#     # draw the histogram with the specified number of bins
-#     hist(x, breaks = bins, col = 'darkgray', border = 'white')
-#     
-#   })
-#   
-# })
-
-# stockData <- read.csv("pandasTest.csv", header=TRUE, stringsAsFactors = FALSE)
+max_plots <- 10
 
 shinyServer(function(input, output) {
   
@@ -41,36 +25,44 @@ shinyServer(function(input, output) {
     # input$variable
   })
   
-  sliderValues <- reactive({
-    
-  })
-  
   stocks <- reactiveValues()
-  # observe({
-  #   if (input$add > 0) {
-  #     stocks$dList <- c(isolate(stocks$dList), input$text)
-  #   }
-  # })
+
   observeEvent(input$add, {
     stocks$dList <- c(isolate(stocks$dList), input$text)
   })
   
   output$list <- renderText({
     stocks$dList
+    
   })
+
   
   output$stockPlot <- renderPlot({
     
-    inputStockName = "GOOG"
+    # inputStockName = "GOOG"
+    # 
+    # stockData = createStockData(inputStockName)
     
-    stockData = createStockData(inputStockName)
-    
+    stockData = createStockData(input$text)
+    inputStockName <- paste(input$text, ".", input$variable, sep="")
+
     # Note! input$variable needs the format [stockName.varaible] e.g. "GOOG.Adj.Close"
     # So I suggest concat or paste stockName+input$variable
-    data <- data.frame(date = row.names(stockData), var = stockData[["GOOG.Adj.Close"]])
-    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line() 
+
+    # data <- data.frame(date = row.names(stockData), var = stockData[["GOOG.Adj.Close"]])
+    # ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line()
+    
+    data <- data.frame(date = row.names(stockData), var = stockData[[inputStockName]])
+    ggplot(data, aes(as.Date(date, "%Y-%m-%d"), var)) + geom_line()
+    
     
   })
+    
+    
+    
+  # })
+  
+  # Helper methods
   
   createStockData <- function(inputStockName) {
     stockTimeSeries = yahooSeries(inputStockName)
@@ -79,6 +71,18 @@ shinyServer(function(input, output) {
     
     return(stockDF)
     
+  }
+  
+  plotGraph <- function(inputDF) {
+    
+    ggplot(inputDF, aes(x=as.Date(date, "%Y-%m-%d"), y=var)) + geom_line()
+    
+  }
+  
+  plotMultiGraph <- function(inputDF_1,inputDF_2=NULL,inputDF_3=NULL,inputDF_4=NULL) {
+    
+    ggplot(data=inputDF_1, mapping= aes( x = as.Date(date, "%Y-%m-%d"), y=var )) + geom_line(
+      data=inputDF_1) + geom_line(data=inputDF_2) + geom_line(data=inputDF_3) + geom_line(data=inputDF_4)
   }
   
 })

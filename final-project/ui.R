@@ -39,29 +39,22 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     selectInput("variable", "Variable:",
-                list("Open" = "Open",
+                list("Adj Close" = "Adj.Close",
+                     "Open" = "Open",
                      "High" = "High",
                      "Low" = "Low",
                      "Close" = "Close",
-                     "Volume" = "Volume",
-                     "Adj Close" = "Adj.Close")),
+                     "Volume" = "Volume")),
     
     # checkboxInput("outliers", "Show outliers", FALSE),
     
     # br(),
     
     textInput('text', 'Stock', 'Text'),
-    actionButton('add', 'Add to List'),
-    verbatimTextOutput('list'),
+    submitButton("Submit")
+    # actionButton('add', 'Add to List')
+    # verbatimTextOutput('list')
     
-    br(),
-    
-    sliderInput("Dates",
-                "Date Range:",
-                min = as.Date("2016-01-01", "%Y-%m-%d"),
-                max = as.Date("2018-01-01", "%Y-%m-%d"),
-                value = c(as.Date("2016-01-01"), as.Date("2017-01-01")),
-                timeFormat = "%Y-%m-%d")
   ),
   
   mainPanel(
