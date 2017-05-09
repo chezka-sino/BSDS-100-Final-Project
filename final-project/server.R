@@ -93,7 +93,6 @@ shinyServer(function(input, output) {
       indicators <- "addVo()"
     }
     
-    print(indicators)
     StockData <- createStockData(input$text)
     chartSeries(StockData,theme = "black",subset = input$select,TA=indicators)    
     

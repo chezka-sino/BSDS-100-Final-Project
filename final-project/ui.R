@@ -24,8 +24,8 @@ shinyUI(pageWithSidebar(
                      "Volume" = "Volume")),
     
     selectInput("select", "Time Frame",
-                list("1 Week" = "last 1 week",
-                     "1 Month" = "last 1 month",
+                list("5 Day" = "last 5 days",
+                     "1 Month" = "last 30 days",
                      "3 Months" = "last 3 month",
                      "1 Year" = "last 1 year",
                      "3 Years" = "last 3 year",
