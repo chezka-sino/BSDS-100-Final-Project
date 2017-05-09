@@ -12,7 +12,7 @@ library(shiny)
 shinyUI(pageWithSidebar(
   
   # Application title
-  headerPanel("Stocks"),
+  headerPanel("Stocks Visualizer"),
   
   sidebarPanel(
     selectInput("variable", "Variable:",
