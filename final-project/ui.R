@@ -23,7 +23,7 @@ shinyUI(pageWithSidebar(
                      "Close" = "Close",
                      "Volume" = "Volume")),
     
-    selectInput("select", "Time Frame",
+    selectInput("select", "Time Frame:",
                 list("1 Week" = 9,
                      "1 Month" = 32,
                      "3 Months" = 92,
@@ -33,7 +33,7 @@ shinyUI(pageWithSidebar(
     
     # checkboxInput("outliers", "Show outliers", FALSE),
     
-    textInput('text', 'Stock', 'GOOG'),
+    textInput('text', 'Stock:', 'GOOG'),
     submitButton("Submit")
     # actionButton('add', 'Add to List')
     # verbatimTextOutput
@@ -47,7 +47,16 @@ shinyUI(pageWithSidebar(
     
     br(),
     
-    tableOutput("metrics")
+    tableOutput("metrics"),
+    
+    br(),
+    
+    plotOutput("wordCloud"),
+    
+    h4(textOutput("newsTitle")),
+    
+    tableOutput("news")
+    
   )
   
 ))
